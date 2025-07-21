@@ -1,0 +1,21 @@
+:root  > * {
+  /* LINKS */
+  .md-content {
+    --md-typeset-a-color: var(--md-accent-fg-color);
+  }
+  .md-nav__link--active {
+    color: color-mix(in srgb, var(--md-accent-fg-color) 65%, white)
+  }
+  /* TYPESET */
+  .md-typeset .admonition, .md-typeset details {
+    border-width: 0;
+    border-left-width: 4px;
+    border-color: var(--md-accent-fg-color);
+  }
+  .md-typeset .example > .admonition-title, .md-typeset .example > summary {
+    background-color: color-mix(in srgb, var(--md-primary-fg-color) 20%);
+  }
+  .md-typeset .example > .admonition-title::before, .md-typeset .example > summary::before {
+    background-color: color-mix(in srgb, var(--md-accent-fg-color) 80%, white);
+  }
+}
