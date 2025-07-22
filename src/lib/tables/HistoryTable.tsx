@@ -27,6 +27,22 @@ const HistoryTable = ({ viewMode = "default" }: HistoryTableProps) => {
   const [authorizingServices, setAuthorizingServices] = useState<Set<string>>(new Set());
   const [deletingServices, setDeletingServices] = useState<Set<string>>(new Set());
 
+  // Button styling function
+  const getButtonStyles = (variant: 'authorize' | 'revoke' | 'delete') => {
+    const baseStyles = "group flex items-center justify-center gap-1 px-3 py-1 rounded-lg font-semibold text-xs transition-all duration-200 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 border-b-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:border-0";
+    
+    switch (variant) {
+      case 'authorize':
+        return `${baseStyles} bg-green-600 dark:text-white border-green-800 hover:bg-green-700 active:bg-green-800 focus-visible:outline-green-500 disabled:bg-green-600 disabled:text-white`;
+      case 'revoke':
+        return `${baseStyles} bg-orange-600 dark:text-white border-orange-800 hover:bg-orange-700 active:bg-orange-800 focus-visible:outline-orange-500 disabled:bg-orange-600 disabled:text-white`;
+      case 'delete':
+        return `${baseStyles} bg-red-600 dark:text-white border-red-800 hover:bg-red-700 active:bg-red-800 focus-visible:outline-red-500 disabled:bg-red-600 disabled:text-white`;
+      default:
+        return baseStyles;
+    }
+  };
+
   useEffect(() => {
     fetchServices();
   }, [user, viewMode]);
@@ -210,132 +226,233 @@ const HistoryTable = ({ viewMode = "default" }: HistoryTableProps) => {
     }
   };
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div className="text-red-500">Erro: {error}</div>;
+  // Icons for buttons
+  const AuthorizeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 12l2 2 4-4"/>
+      <circle cx="12" cy="12" r="10"/>
+    </svg>
+  );
+
+  const RevokeIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="m15 9-6 6"/>
+      <path d="m9 9 6 6"/>
+    </svg>
+  );
+
+  const DeleteIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18"/>
+      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+    </svg>
+  );
+
+  const LoadingIcon = () => (
+    <svg className="animate-spin" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+    </svg>
+  );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-gray-600 dark:text-gray-400">Carregando histórico...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-red-600 bg-red-50 border border-red-200 rounded-lg p-4 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+          <strong>Erro:</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{getTitle()}</h2>
+    <div className="p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{getTitle()}</h2>
         {viewMode === "admin-pending" && (
-          <div className="text-sm text-orange-600 bg-orange-50 px-3 py-2 rounded">
+          <div className="text-sm text-orange-600 bg-orange-50 px-3 py-2 rounded border border-orange-200 dark:bg-orange-900/20 dark:border-orange-800 dark:text-orange-400">
             {services.length} serviço(s) aguardando autorização
           </div>
         )}
       </div>
 
       <div className="space-y-6">
-        {groupedServices.map(([monthYear, { services: monthServices, total, pendingTotal }]) => (
-          <div key={monthYear}>
-            <h3 className="text-lg font-semibold text-gray-700 mb-3 border-b pb-2 flex justify-between items-center">
-              <span>
-                {monthYear} ({monthServices.length} serviços)
-                {monthYear === getCurrentMonth() && isAdmin && (viewMode === "admin-all" || viewMode === "admin-pending") && (
-                  <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    Mês Atual - Exclusão Permitida
-                  </span>
-                )}
-              </span>
-              <div className="flex gap-4">
-                {viewMode === "admin-all" && pendingTotal > 0 && (
-                  <span className="text-orange-600 font-bold">
-                    Pendente: {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(pendingTotal)}
-                  </span>
-                )}
-                <span className="text-green-600 font-bold">
-                  Total: {new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(total)}
-                </span>
+        {groupedServices.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-500 dark:text-gray-400 text-lg">
+              {viewMode === "admin-pending" 
+                ? "Nenhum serviço pendente encontrado" 
+                : "Nenhum serviço encontrado no histórico"
+              }
+            </div>
+          </div>
+        ) : (
+          groupedServices.map(([monthYear, { services: monthServices, total, pendingTotal }]) => (
+            <div key={monthYear} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      {new Date(monthYear + '-01').toLocaleDateString('pt-BR', { 
+                        month: 'long', 
+                        year: 'numeric' 
+                      })} ({monthServices.length} serviços)
+                    </span>
+                    {monthYear === getCurrentMonth() && isAdmin && (viewMode === "admin-all" || viewMode === "admin-pending") && (
+                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded dark:bg-blue-900/20 dark:text-blue-400">
+                        Mês Atual - Exclusão Permitida
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {viewMode === "admin-all" && pendingTotal > 0 && (
+                      <span className="text-orange-600 font-bold dark:text-orange-400">
+                        Pendente: {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(pendingTotal)}
+                      </span>
+                    )}
+                    <span className="text-green-600 font-bold dark:text-green-400">
+                      Total: {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(total)}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </h3>
-            
-            <ul className="space-y-2">
-              {monthServices.map((service) => (
-                <li
-                  key={service.id}
-                  className={`p-4 rounded shadow flex flex-row items-center space-x-4 ${
-                    service.include_in_total === false
-                      ? "bg-yellow-50 border border-yellow-200"
-                      : ""
-                  }`}
-                >
-                  <div className="font-semibold w-1/6">
-                    {service.service_type && (
-                      <span className="text-blue-600 text-md mr-2">
-                        {service.service_type}:
-                      </span>
-                    )}
-                    {service.title}
-                    {service.include_in_total === false && (
-                      <span className="ml-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">
-                        Não incluído no total
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="w-1/6 text-xs text-gray-500">
-                    {service.username}
-                  </div>
-                  
-                  <div className={`w-1/6 text-sm font-semibold ${
-                    service.include_in_total === false ? 'text-gray-400' : 'text-green-600'
-                  }`}>
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(service.price || 0)}
-                  </div>
-                  
-                  <div className="w-1/6 text-sm">
-                    {new Date(service.created_at || "").toLocaleString("pt-BR", {
-                      dateStyle: "short",
-                      timeStyle: "short",
-                    })}
-                  </div>
+              
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {monthServices.map((service) => (
+                  <div
+                    key={service.id}
+                    className={`p-4 flex flex-col lg:flex-row items-start lg:items-center gap-4 transition-colors ${
+                      service.include_in_total === false
+                        ? "bg-yellow-50 dark:bg-yellow-900/20"
+                        : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-gray-900 dark:text-white">
+                        {service.service_type && (
+                          <span className="text-blue-600 dark:text-blue-400 text-sm mr-2">
+                            {service.service_type}:
+                          </span>
+                        )}
+                        {service.title}
+                        {service.include_in_total === false && (
+                          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">
+                            Não incluído no total
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Por: {service.username}
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6">
+                      <div className={`text-sm font-semibold ${
+                        service.include_in_total === false 
+                          ? 'text-gray-400 dark:text-gray-500' 
+                          : 'text-green-600 dark:text-green-400'
+                      }`}>
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(service.price || 0)}
+                      </div>
+                      
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(service.created_at || "").toLocaleString("pt-BR", {
+                          dateStyle: "short",
+                          timeStyle: "short",
+                        })}
+                      </div>
 
-                  {isAdmin && (viewMode === "admin-all" || viewMode === "admin-pending") && (
-                    <div className="w-1/4 flex gap-2">
-                      {/* Authorization buttons */}
-                      {service.include_in_total === false ? (
-                        <button
-                          onClick={() => handleAuthorizeService(service.id)}
-                          disabled={authorizingServices.has(service.id)}
-                          className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 disabled:opacity-50"
-                        >
-                          {authorizingServices.has(service.id) ? "Autorizando..." : "Autorizar"}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleRevokeAuthorization(service.id)}
-                          disabled={authorizingServices.has(service.id)}
-                          className="px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600 disabled:opacity-50"
-                        >
-                          {authorizingServices.has(service.id) ? "Revogando..." : "Revogar"}
-                        </button>
-                      )}
+                      {isAdmin && (viewMode === "admin-all" || viewMode === "admin-pending") && (
+                        <div className="flex flex-wrap gap-2">
+                          {/* Authorization buttons */}
+                          {service.include_in_total === false ? (
+                            <button
+                              onClick={() => handleAuthorizeService(service.id)}
+                              disabled={authorizingServices.has(service.id)}
+                              className={getButtonStyles('authorize')}
+                              title="Autorizar inclusão no total"
+                            >
+                              {authorizingServices.has(service.id) ? (
+                                <>
+                                  <LoadingIcon />
+                                  <span>Autorizando...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <AuthorizeIcon />
+                                  <span>Autorizar</span>
+                                </>
+                              )}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleRevokeAuthorization(service.id)}
+                              disabled={authorizingServices.has(service.id)}
+                              className={getButtonStyles('revoke')}
+                              title="Revogar autorização"
+                            >
+                              {authorizingServices.has(service.id) ? (
+                                <>
+                                  <LoadingIcon />
+                                  <span>Revogando...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <RevokeIcon />
+                                  <span>Revogar</span>
+                                </>
+                              )}
+                            </button>
+                          )}
 
-                      {/* Delete button - only for current month */}
-                      {isCurrentMonth(service.created_at || "") && (
-                        <button
-                          onClick={() => handleDeleteService(service.id, `${service.service_type}: ${service.title}`)}
-                          disabled={deletingServices.has(service.id)}
-                          className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 disabled:opacity-50"
-                        >
-                          {deletingServices.has(service.id) ? "Excluindo..." : "Excluir"}
-                        </button>
+                          {/* Delete button - only for current month */}
+                          {isCurrentMonth(service.created_at || "") && (
+                            <button
+                              onClick={() => handleDeleteService(service.id, `${service.service_type}: ${service.title}`)}
+                              disabled={deletingServices.has(service.id)}
+                              className={getButtonStyles('delete')}
+                              title="Excluir serviço permanentemente"
+                            >
+                              {deletingServices.has(service.id) ? (
+                                <>
+                                  <LoadingIcon />
+                                  <span>Excluindo...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <DeleteIcon />
+                                  <span>Excluir</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

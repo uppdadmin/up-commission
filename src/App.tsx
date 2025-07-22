@@ -6,6 +6,7 @@ import RootLayout from "./_root/RootLayout"
 import AuthLayout from "./_auth/AuthLayout"
 import { Dashboard } from "./_root/pages"
 import Login from "./_auth/forms/Login"
+import Dashboards from "./_root/pages/Dashboards"
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
             <Route element={<RootLayout />}>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboards />} />
             </Route>
         </Route>
     </Routes>

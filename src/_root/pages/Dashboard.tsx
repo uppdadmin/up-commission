@@ -35,6 +35,9 @@ const Dashboard = () => {
           >
             Histórico
           </button>
+          <a href='/dashboard'>
+            Dashboard
+          </a>
           
           {isAdmin && (
             <>
