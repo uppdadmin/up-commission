@@ -15,7 +15,7 @@ interface TabConfig {
   variant?: 'primary' | 'secondary' | 'admin' | 'warning';
 }
 
-const Dashboard = () => {
+const Testing = () => {
   const { user } = useUser();
   const isAdmin = user?.publicMetadata?.role === "admin";
   const [activeTab, setActiveTab] = useState<TabType>("services");
@@ -183,4 +183,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Testing;

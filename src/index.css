@@ -7,22 +7,13 @@
 
   /* Dark */
   /* color-scheme: light dark;
-  color: #333333;
-  background-color: #242424; */
+    color: light-dark(#333333, #efefec);
+    background-color: light-dark(#efedea, #242424); */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -31,39 +22,10 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 2.3em;
-  line-height: 1.1;
-}
-
-/* button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-} */
- 
-.dashboard {
-  min-height: 100vh;
-  min-width: 100vw;
-  display: flex;
-  flex-direction: column;
-  background-color: #f8f9fa;
-}
+/* Authentication Layout */
 .authLayout {
   min-height: 100vh;
   min-width: 100vw;
@@ -71,32 +33,6 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: #333;
-}
-.dashboard-header {
-  background-color: white;
-  border-bottom: 1px solid #e9ecef;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.header-content h2 {
-  margin: 0;
-  color: #333;
-  font-size: 1.5rem;
-  font-weight: 600;
 }
 .login-button {
   display: flex;
@@ -109,141 +45,11 @@ button:focus-visible {
   margin-top: 1rem;
   text-align: center;
 }
-.dashboard-main {
-  flex: 1;
-  padding: 2rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.dashboard-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.dashboard-actions {
-  margin-bottom: 2rem;
-  display: flex;
-  justify-content: flex-start;
-}
-
-.action-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,123,255,0.2);
-}
-
-.action-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0,123,255,0.3);
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-top: 1rem;
-}
-
-.dashboard-card {
-  background: white;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  border: 1px solid #e9ecef;
-  transition: all 0.2s ease;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-}
-
-.dashboard-card h3 {
-  margin: 0 0 1rem 0;
-  color: #333;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.dashboard-card p {
-  margin: 0;
-  color: #666;
-  line-height: 1.5;
-}
-
-.quick-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
-
-.quick-action-btn {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.quick-action-btn:hover {
-  background-color: #545b62;
-  transform: translateY(-1px);
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .dashboard-main {
-    padding: 1rem;
-  }
-  
-  .header-content {
-    padding: 0 1rem;
-  }
-  
-  .header-content h2 {
-    font-size: 1.25rem;
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .dashboard-card {
-    padding: 1.5rem;
-  }
-  
-  .quick-actions {
-    justify-content: center;
-  }
+
 }
-
-
-
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
 }
